@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falcon eWallet</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Arial}body{background:#f2f5f8}header{background:#0b1f33;color:#fff;padding:16px 22px;display:flex;justify-content:space-between;align-items:center}header b{font-size:22px}header b span{color:#00d68f}.wrap{max-width:1100px;margin:auto;padding:20px}.hero{background:linear-gradient(135deg,#0b1f33,#0a7a42);color:#fff;border-radius:20px;padding:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.hero h1{font-size:32px}.balance{background:#fff;color:#111;border-radius:16px;padding:18px;min-width:280px;flex:1}.balance h2{font-size:34px}.tabs{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}.tabs button{border:1px solid #ddd;background:#fff;padding:10px 16px;border-radius:999px;cursor:pointer;font-weight:600}.tabs button.active{background:#111;color:#fff}.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.05)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}}input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px}.btn{width:100%;padding:12px;border:none;border-radius:10px;background:#0a7a42;color:#fff;font-weight:700;cursor:pointer;margin-top:10px}.btn.dark{background:#111}.btn.gold{background:#f5a623;color:#111}.note{background:#fff8e1;padding:12px;border-radius:10px;font-size:13px;margin-top:10px}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{padding:10px;text-align:left;border-bottom:1px solid #eee;font-size:14px}.hidden{display:none}.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:700px){.kpi{grid-template-columns:1fr 1fr}}.kpi div{background:#f8fafc;padding:14px;border-radius:12px}.demo{background:#fff;color:#111;border-radius:12px;padding:12px;font-size:13px;margin-top:12px;line-height:1.6}.demo b{color:#0a7a42}
+    </style>
+</head>
+<body>
+<header><b>🦅 Falcon <span>eWallet</span></b><span id="topUser">Not logged in</span></header>
+<div class="wrap">
+    <div class="hero"><div><h1>Money that<br>protects you<br>from yourself.</h1><p>Lock in MySafe. Get daily allowance. Never overspend.</p><div class="demo"><b>🔑 DEMO ACCOUNTS - Try it:</b><br>👤 Admin: <b>0700000000</b> / Password: <b>admin123</b> - sees Admin Dashboard<br>👤 Alex Macharia: <b>0700000001</b> / PIN: <b>1234</b> - KES 45,000<br>👤 Mary Njoki: <b>0700000002</b> / PIN: <b>1234</b> - KES 12,000<br><span style="color:#666">Or Register your own account below.</span></div></div>
+        <div class="balance"><small>WALLET BALANCE</small><h2 id="balBig">KES 0</h2><span id="accBig">Login to see account</span><p id="balName" style="font-weight:700;margin-top:8px"></p><p id="balRole" style="color:#0a7a42;font-weight:700"></p></div></div>
+
+    <div class="tabs"><button class="active" onclick="showTab('login',this)">🔑 Login</button><button onclick="showTab('register',this)">📝 Register</button><button onclick="showTab('wallet',this)">💳 Wallet</button><button onclick="showTab('safe',this)">🔒 MySafe</button><button id="adminTabBtn" class="hidden" onclick="showTab('admin',this)">📊 Admin</button></div>
+
+    <div id="tab-login" class="tab"><div class="card"><h3>Login</h3><div class="grid"><input id="lPhone" placeholder="Phone" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><input id="lPin" type="password" placeholder="Customer: 4-digit PIN / Admin: Password" maxlength="20"></div><p style="font-size:12px;color:#666;margin-top:6px">Customer? Use 4-digit PIN like M-Pesa. Admin? Use password.</p><button class="btn" onclick="login()">Login</button><div id="loginOut" class="note hidden"></div></div></div>
+
+    <div id="tab-register" class="tab hidden"><div class="card"><h3>Create Account</h3><div class="grid"><input id="rName" placeholder="Full Name"><input id="rPhone" placeholder="Phone" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><input id="rEmail" placeholder="Email"><input id="rId" placeholder="National ID" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><input id="rPin" type="password" placeholder="PIN - 4 digits only" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)"></div><button class="btn" onclick="register()">Create Account</button><div id="rOut" class="note hidden"></div></div></div>
+
+    <div id="tab-wallet" class="tab hidden"><div class="card"><h3>Wallet</h3><input id="wAcc" placeholder="Account Number"><div class="grid"><input id="wAmt" type="number" placeholder="Amount"><input id="stkPhone" placeholder="M-Pesa Phone for STK"></div><div class="grid"><button class="btn" onclick="stkPush()">📱 M-Pesa STK Push Deposit</button><button class="btn dark" onclick="withdraw()">Withdraw</button></div><div class="grid"><input id="tFrom" placeholder="From Account"><input id="tTo" placeholder="To Account"></div><button class="btn" onclick="transfer()">Transfer</button><div class="grid" style="margin-top:10px"><button class="btn dark" onclick="balance()">Refresh Balance</button><button class="btn dark" onclick="history()">History</button></div><div id="wOut"></div></div></div>
+
+    <div id="tab-safe" class="tab hidden"><div class="card"><h3>MySafe</h3><input id="sAcc" placeholder="Account Number"><div class="grid"><input id="sTotal" type="number" placeholder="Total to Lock e.g. 30000"><input id="sDays" type="number" placeholder="Days e.g. 30"></div><div class="grid"><input id="sWeekday" type="number" placeholder="Weekday e.g. 800"><input id="sWeekend" type="number" placeholder="Weekend e.g. 1500"></div><div class="grid"><input id="sWCount" type="number" placeholder="Weekday Count 22"><input id="sECount" type="number" placeholder="Weekend Count 8"></div><div id="calc" class="note">Fill to see calculation</div><button class="btn gold" onclick="createSafe()">🔒 Lock in MySafe - Wallet balance will drop</button><div class="grid" style="margin-top:10px"><input id="sPlanId" placeholder="Plan ID"><button class="btn" onclick="claim()">Claim Today</button></div><button class="btn dark" onclick="myPlans()">My Plans</button><div id="sOut"></div></div></div>
+
+    <div id="tab-admin" class="tab hidden"><div class="card"><h3>Admin Dashboard - Only for ADMIN role</h3><div class="kpi"><div><small>Users</small><br><b id="kUsers">-</b></div><div><small>Wallet Balances</small><br><b id="kBal">-</b></div><div><small>Locked in Safe</small><br><b id="kSafe">-</b></div><div><small>Transactions</small><br><b id="kTx">-</b></div></div><div class="grid" style="margin-top:10px"><button class="btn" onclick="admin()">Refresh</button><button class="btn dark" onclick="adminUsers()">All Users</button></div><button class="btn dark" onclick="adminLedger()">Ledger</button><div id="aOut"></div></div></div>
+</div>
+
+<script>
+    function val(id){return document.getElementById(id).value}
+    function showTab(n,btn){document.querySelectorAll('.tab').forEach(e=>e.classList.add('hidden'));document.getElementById('tab-'+n).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
+    function calc(){let t=+val('sTotal')||0,wd=+val('sWeekday')||0,we=+val('sWeekend')||0,wc=+val('sWCount')||0,ec=+val('sECount')||0;let p=wd*wc+we*ec;document.getElementById('calc').innerHTML=`Planned: <b>KES ${p}</b> • Locked: <b>${t}</b> • Leftover: <b>${t-p}</b>`}
+    ['sTotal','sWeekday','sWeekend','sWCount','sECount'].forEach(id=>document.getElementById(id).addEventListener('input',calc))
+    async function login(){
+        if(!val('lPhone')||!val('lPin')){alert('Fill phone and PIN / Password');return}
+        let isAdminPhone = val('lPhone') === '0700000000';
+        if(!isAdminPhone && (val('lPin').length!==4 || !/^[0-9]{4}$/.test(val('lPin')))){alert('Customer PIN must be exactly 4 digits, numbers only - like M-Pesa');return}
+        let r=await fetch(`/api/wallet/login?phoneNumber=${val('lPhone')}&pin=${val('lPin')}`,{method:'POST'});
+        if(!r.ok){alert('Wrong phone or PIN / Password');return}
+        let j=await r.json();
+        document.getElementById('topUser').innerText=j.fullName+' ('+j.role+')';
+        document.getElementById('balName').innerText=j.fullName;
+        document.getElementById('balRole').innerText=j.role;
+        document.getElementById('loginOut').classList.remove('hidden');
+        document.getElementById('loginOut').innerHTML=`Welcome ${j.fullName} - Role: ${j.role}`;
+        let w=await fetch(`/api/wallet/wallet-by-phone?phoneNumber=${val('lPhone')}`);
+        let wj=await w.json();
+        document.getElementById('balBig').innerText='KES '+wj.balance;
+        document.getElementById('accBig').innerText=wj.accountNumber;
+        ['wAcc','sAcc','tFrom'].forEach(id=>document.getElementById(id).value=wj.accountNumber);
+        document.getElementById('stkPhone').value=val('lPhone');
+        if(j.role==='ADMIN'){document.getElementById('adminTabBtn').classList.remove('hidden');showTab('admin');admin()}
+        else{showTab('wallet')}
+    }
+    async function register(){
+        if(!val('rName')||!val('rPhone')||!val('rEmail')||!val('rId')||!val('rPin')){alert('Fill ALL fields');return}
+        if(val('rPin').length!==4||!/^[0-9]{4}$/.test(val('rPin'))){alert('PIN must be exactly 4 digits, numbers only - like M-Pesa');return}
+        let body={fullName:val('rName'),phoneNumber:val('rPhone'),email:val('rEmail'),nationalId:val('rId'),pin:val('rPin')};
+        let r=await fetch('/api/wallet/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        let j=await r.json();let o=document.getElementById('rOut');o.classList.remove('hidden');o.innerHTML=`✅ ${j.message}<br>Account: <b>${j.accountNumber}</b>`;
+        ['wAcc','sAcc','tFrom'].forEach(id=>document.getElementById(id).value=j.accountNumber);
+    }
+    async function stkPush(){
+        if(!val('wAcc')||!val('wAmt')||!val('stkPhone')){alert('Fill account, amount, M-Pesa phone');return}
+        document.getElementById('wOut').innerHTML=`<div class="note">📱 Sending STK Push to ${val('stkPhone')}... Check your phone, enter PIN...</div>`;
+        let r=await fetch(`/api/wallet/stk-push?accountNumber=${val('wAcc')}&amount=${val('wAmt')}&phoneNumber=${val('stkPhone')}`,{method:'POST'});
+        document.getElementById('wOut').innerHTML=`<div class="note">✅ ${await r.text()}</div>`;balance();
+    }
+    async function withdraw(){
+        if(!val('wAcc')||!val('wAmt')){alert('Fill account and amount');return}
+        let r=await fetch(`/api/wallet/withdraw?accountNumber=${val('wAcc')}&amount=${val('wAmt')}`,{method:'POST'});let j=await r.json();document.getElementById('wOut').innerHTML=`<div class="note">Withdrawn. New Balance: <b>KES ${j.balance}</b></div>`;document.getElementById('balBig').innerText='KES '+j.balance;
+    }
+    async function transfer(){
+        if(!val('tFrom')||!val('tTo')||!val('wAmt')){alert('Fill from, to, amount');return}
+        if(val('tFrom')===val('tTo')){alert('Cannot transfer to same account - pick a different To account');return}
+        let r=await fetch(`/api/wallet/transfer?fromAccount=${val('tFrom')}&toAccount=${val('tTo')}&amount=${val('wAmt')}`,{method:'POST'});
+        if(!r.ok){alert(await r.text());return}
+        document.getElementById('wOut').innerHTML=`<div class="note">✅ Transfer Ref: ${await r.text()}</div>`;
+        document.getElementById('wAcc').value=val('tFrom');balance();
+    }
+    async function balance(){let r=await fetch(`/api/wallet/balance?accountNumber=${val('wAcc')}`);let j=await r.json();document.getElementById('balBig').innerText='KES '+j.balance;document.getElementById('accBig').innerText=j.accountNumber;document.getElementById('wOut').innerHTML=`<div class="note">Balance: <b>KES ${j.balance}</b> • ${j.accountNumber}</div>`}
+    async function history(){let r=await fetch(`/api/wallet/history?accountNumber=${val('wAcc')}`);let j=await r.json();let rows=j.map(t=>`<tr><td>${t.type}</td><td>KES ${t.amount}</td><td>${t.reference}</td><td>${t.status}</td></tr>`).join('');document.getElementById('wOut').innerHTML=`<table><tr><th>Type</th><th>Amount</th><th>Ref</th><th>Status</th></tr>${rows}</table>`}
+    async function createSafe(){
+        if(!val('sAcc')||!val('sTotal')){alert('Fill account and total');return}
+        let body={accountNumber:val('sAcc'),totalAmount:+val('sTotal'),weekdayAmount:+val('sWeekday'),weekendAmount:+val('sWeekend'),totalDays:+val('sDays'),weekdayCount:+val('sWCount'),weekendCount:+val('sECount')};
+        let r=await fetch('/api/wallet/safe/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});let j=await r.json();
+        document.getElementById('sOut').innerHTML=`<div class="note">🔒 Plan #${j.planId} Locked KES ${j.totalLocked}. Leftover ${j.leftoverToReturn} returns at end.<br>Wallet balance dropped by ${j.totalLocked} - check top balance!</div>`;
+        if(j.planId)document.getElementById('sPlanId').value=j.planId;
+        document.getElementById('wAcc').value=val('sAcc');balance();
+    }
+    async function claim(){let r=await fetch(`/api/wallet/safe/claim/${val('sPlanId')}`,{method:'POST'});document.getElementById('sOut').innerHTML=`<div class="note">✅ Today payout: KES ${await r.text()}</div>`;balance()}
+    async function myPlans(){let r=await fetch(`/api/wallet/safe/my-plans?accountNumber=${val('sAcc')}`);let j=await r.json();let rows=j.map(p=>`<tr><td>#${p.id}</td><td>KES ${p.totalAmount}</td><td>KES ${p.remainingAmount}</td><td>${p.daysPaid}/${p.totalDays}</td><td>${p.status}</td></tr>`).join('');document.getElementById('sOut').innerHTML=`<table><tr><th>Plan</th><th>Locked</th><th>Remaining</th><th>Progress</th><th>Status</th></tr>${rows}</table>`}
+    async function admin(){let r=await fetch('/api/admin/dashboard');let j=await r.json();document.getElementById('kUsers').innerText=j.totalUsers;document.getElementById('kBal').innerText='KES '+j.totalWalletBalances;document.getElementById('kSafe').innerText='KES '+j.totalLockedInSafe;document.getElementById('kTx').innerText=j.totalTransactions}
+    async function adminUsers(){let r=await fetch('/api/admin/users');let j=await r.json();let rows=j.map(u=>`<tr><td>${u.fullName}</td><td>${u.phoneNumber}</td><td>${u.email}</td><td>${u.role}</td></tr>`).join('');document.getElementById('aOut').innerHTML=`<table><tr><th>Name</th><th>Phone</th><th>Email</th><th>Role</th></tr>${rows}</table>`}
+    async function adminLedger(){let r=await fetch('/api/admin/ledger');let j=await r.json();let rows=j.map(t=>`<tr><td>${t.type}</td><td>KES ${t.amount}</td><td>${t.reference}</td><td>${t.status}</td></tr>`).join('');document.getElementById('aOut').innerHTML=`<table><tr><th>Type</th><th>Amount</th><th>Ref</th><th>Status</th></tr>${rows}</table>`}
+</script>
+</body>
+</html>
