@@ -100,7 +100,7 @@ src/main/java/com/falcon/ewalet/
 - Maven
 - IntelliJ IDEA or any Java IDE (optional)
 
-### Run the Application
+Run the Application
 
 bash
 git clone https://github.com/Ale-Macharia/falcon-ewallet.git
@@ -114,5 +114,8 @@ http://localhost:8080
 No external database setup is required. The application uses a file-based H2 database stored in the data/ directory.
 
 Future Improvements:
-Integration with Safaricom Daraja API for real M-Pesa paymentsScheduled automatic daily payouts for MySafe plansSMS / email notifications for transactionsSpending analytics and chartsJWT-based authenticationAuthorAlex Macharia
+
+Integration with Safaricom Daraja API for real M-Pesa paymentsScheduled automatic daily payouts for MySafe plansSMS / email notifications for transactionsSpending analytics and chartsJWT-based authentication
+
+Author: Alex Macharia Kariuki
 Nairobi, Kenya
